@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeywordGenius - AI-Powered Keyword Research Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4285F4;
+            --secondary: #34A853;
+            --accent: #EA4335;
+            --dark: #202124;
+            --light: #f8f9fa;
+            --gray: #5f6368;
+            --light-gray: #e8eaed;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .settings-btn:hover {
+            color: var(--primary);
+            transform: rotate(30deg);
+        }
+        
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .settings-panel.active {
+            right: 0;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .close-settings {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .input-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .input-section h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-section h2 i {
+            color: var(--primary);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--gray);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d33426;
+        }
+        
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .results-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .results-header h2 {
+            font-size: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .results-header h2 i {
+            color: var(--secondary);
+        }
+        
+        .export-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        .export-btn:hover {
+            color: var(--primary);
+        }
+        
+        .keyword-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .keyword-item {
+            background-color: var(--light);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .keyword-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .keyword-text {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .keyword-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .keyword-volume {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .keyword-difficulty {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(66, 133, 244, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .suggestions-list {
+            list-style-type: none;
+        }
+        
+        .suggestion-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: var(--light);
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .settings-panel.active {
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-key"></i>
+                <span>KeywordGenius</span>
+            </div>
+            <button class="settings-btn" id="settingsBtn">
+                <i class="fas fa-cog"></i>
+            </button>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2><i class="fas fa-search"></i> Keyword Research</h2>
+                
+                <div class="input-group">
+                    <label for="seedKeyword">Seed Keyword or Topic</label>
+                    <input type="text" id="seedKeyword" placeholder="e.g. vegan recipes, digital marketing">
+                </div>
+                
+                <div class="input-group">
+                    <label for="targetAudience">Target Audience (Optional)</label>
+                    <input type="text" id="targetAudience" placeholder="e.g. young parents, small business owners">
+                </div>
+                
+                <div class="input-group">
+                    <label for="contentType">Content Type</label>
+                    <select id="contentType">
+                        <option value="blog">Blog Post</option>
+                        <option value="product">Product Page</option>
+                        <option value="landing">Landing Page</option>
+                        <option value="guide">Guide/Tutorial</option>
+                        <option value="news">News Article</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="keywordComplexity">Keyword Complexity</label>
+                    <select id="keywordComplexity">
+                        <option value="mixed">Mixed (All Difficulty Levels)</option>
+                        <option value="easy">Easy (Low Competition)</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard (High Competition)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="additionalContext">Additional Context (Optional)</label>
+                    <textarea id="additionalContext" placeholder="Any specific details about your business, location, or unique offerings that could help generate more relevant keywords..."></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="keywordCount">Number of Keywords to Generate</label>
+                    <input type="number" id="keywordCount" min="5" max="50" value="20">
+                </div>
+                
+                <button class="btn" id="generateBtn">
+                    <i class="fas fa-magic"></i> Generate Keywords
+                </button>
+                <button class="btn btn-secondary" id="suggestBtn">
+                    <i class="fas fa-lightbulb"></i> Get Suggestions
+                </button>
+            </div>
+            
+            <div class="results-section">
+                <div class="results-card" id="resultsCard">
+                    <div class="results-header">
+                        <h2><i class="fas fa-list-ul"></i> Generated Keywords</h2>
+                        <button class="export-btn" id="exportBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="all">All Keywords</div>
+                        <div class="tab" data-tab="easy">Easy</div>
+                        <div class="tab" data-tab="medium">Medium</div>
+                        <div class="tab" data-tab="hard">Hard</div>
+                    </div>
+                    
+                    <div class="loading" id="loadingIndicator" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Generating powerful keywords using AI...</p>
+                    </div>
+                    
+                    <div class="tab-content active" id="allKeywords">
+                        <div class="keyword-list" id="keywordList">
+                            <div class="placeholder" style="text-align: center; padding: 40px; color: var(--gray);">
+                                <i class="fas fa-key" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>Your generated keywords will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="easyKeywords">
+                        <div class="keyword-list" id="easyKeywordList">
+                            <div class="placeholder" style="text-align: center; padding: 40px; color: var(--gray);">
+                                <i class="fas fa-battery-quarter" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>Easy difficulty keywords will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="mediumKeywords">
+                        <div class="keyword-list" id="mediumKeywordList">
+                            <div class="placeholder" style="text-align: center; padding: 40px; color: var(--gray);">
+                                <i class="fas fa-battery-half" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>Medium difficulty keywords will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="hardKeywords">
+                        <div class="keyword-list" id="hardKeywordList">
+                            <div class="placeholder" style="text-align: center; padding: 40px; color: var(--gray);">
+                                <i class="fas fa-battery-full" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>Hard difficulty keywords will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-card">
+                    <div class="results-header">
+                        <h2><i class="fas fa-chart-bar"></i> Keyword Statistics</h2>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalKeywords">0</div>
+                            <div class="stat-label">Total Keywords</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgVolume">0</div>
+                            <div class="stat-label">Avg. Monthly Volume</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgDifficulty">0</div>
+                            <div class="stat-label">Avg. Difficulty</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2>Settings</h2>
+            <button class="close-settings" id="closeSettings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="form-group">
+            <label for="apiKey">Google AI API Key</label>
+            <input type="password" id="apiKey" placeholder="Enter your Google AI API key">
+            <small style="color: var(--gray); display: block; margin-top: 5px;">Your API key is stored locally in your browser and never sent to our servers.</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="aiModel">AI Model</label>
+            <select id="aiModel">
+                <option value="gemini-pro">Gemini Pro</option>
+                <option value="text-bison-001">Text Bison</option>
+                <option value="chat-bison-001">Chat Bison</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="temperature">Creativity Level</label>
+            <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Precise</span>
+                <span>Balanced</span>
+                <span>Creative</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="resultFormat">Result Format</label>
+            <select id="resultFormat">
+                <option value="json">JSON (Recommended)</option>
+                <option value="text">Plain Text</option>
+                <option value="csv">CSV Format</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-accent" id="saveSettings">
+            <i class="fas fa-save"></i> Save Settings
+        </button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const settingsBtn = document.getElementById('settingsBtn');
+            const closeSettings = document.getElementById('closeSettings');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            const saveSettings = document.getElementById('saveSettings');
+            const generateBtn = document.getElementById('generateBtn');
+            const suggestBtn = document.getElementById('suggestBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Settings elements
+            const apiKeyInput = document.getElementById('apiKey');
+            const aiModelSelect = document.getElementById('aiModel');
+            const temperatureInput = document.getElementById('temperature');
+            const resultFormatSelect = document.getElementById('resultFormat');
+            
+            // Input elements
+            const seedKeywordInput = document.getElementById('seedKeyword');
+            const targetAudienceInput = document.getElementById('targetAudience');
+            const contentTypeSelect = document.getElementById('contentType');
+            const keywordComplexitySelect = document.getElementById('keywordComplexity');
+            const additionalContextInput = document.getElementById('additionalContext');
+            const keywordCountInput = document.getElementById('keywordCount');
+            
+            // Results elements
+            const keywordList = document.getElementById('keywordList');
+            const easyKeywordList = document.getElementById('easyKeywordList');
+            const mediumKeywordList = document.getElementById('mediumKeywordList');
+            const hardKeywordList = document.getElementById('hardKeywordList');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const totalKeywordsEl = document.getElementById('totalKeywords');
+            const avgVolumeEl = document.getElementById('avgVolume');
+            const avgDifficultyEl = document.getElementById('avgDifficulty');
+            
+            // Toggle settings panel
+            settingsBtn.addEventListener('click', function() {
+                settingsPanel.classList.add('active');
+                overlay.classList.add('active');
+                loadSettings();
+            });
+            
+            closeSettings.addEventListener('click', function() {
+                settingsPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            overlay.addEventListener('click', function() {
+                settingsPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + 'Keywords';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Save settings to localStorage
+            saveSettings.addEventListener('click', function() {
+                const settings = {
+                    apiKey: apiKeyInput.value,
+                    aiModel: aiModelSelect.value,
+                    temperature: temperatureInput.value,
+                    resultFormat: resultFormatSelect.value
+                };
+                
+                localStorage.setItem('keywordGeniusSettings', JSON.stringify(settings));
+                alert('Settings saved successfully!');
+                settingsPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Load settings from localStorage
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('keywordGeniusSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    apiKeyInput.value = settings.apiKey || '';
+                    aiModelSelect.value = settings.aiModel || 'gemini-pro';
+                    temperatureInput.value = settings.temperature || '0.7';
+                    resultFormatSelect.value = settings.resultFormat || 'json';
+                }
+            }
+            
+            // Generate keywords using Google AI API
+            generateBtn.addEventListener('click', async function() {
+                const seedKeyword = seedKeywordInput.value.trim();
+                if (!seedKeyword) {
+                    alert('Please enter a seed keyword or topic');
+                    return;
+                }
+                
+                const settings = JSON.parse(localStorage.getItem('keywordGeniusSettings') || '{}');
+                if (!settings.apiKey) {
+                    alert('Please configure your Google AI API key in settings first');
+                    settingsPanel.classList.add('active');
+                    overlay.classList.add('active');
+                    return;
+                }
+                
+                // Show loading indicator
+                keywordList.innerHTML = '';
+                easyKeywordList.innerHTML = '';
+                mediumKeywordList.innerHTML = '';
+                hardKeywordList.innerHTML = '';
+                loadingIndicator.style.display = 'flex';
+                
+                try {
+                    // Prepare the prompt
+                    const prompt = `Generate ${keywordCountInput.value} SEO-optimized keywords based on the following criteria:
+                    
+                    Seed Keyword/Topic: ${seedKeyword}
+                    Target Audience: ${targetAudienceInput.value || 'Not specified'}
+                    Content Type: ${contentTypeSelect.options[contentTypeSelect.selectedIndex].text}
+                    Keyword Complexity: ${keywordComplexitySelect.options[keywordComplexitySelect.selectedIndex].text}
+                    Additional Context: ${additionalContextInput.value || 'None'}
+                    
+                    Please return the results in ${settings.resultFormat} format with the following fields for each keyword: 
+                    keyword (the actual keyword phrase), 
+                    volume (estimated monthly search volume as a number), 
+                    difficulty (SEO competition difficulty from 1-100), 
+                    intent (commercial, informational, navigational, or transactional),
+                    and a brief opportunity (why this keyword might be valuable).
+                    
+                    Organize the keywords by difficulty level (easy, medium, hard) based on the competition score.`;
+                    
+                    // Call Google AI API
+                    const response = await callGoogleAI(settings.apiKey, prompt, settings.aiModel, settings.temperature);
+                    
+                    // Process the response
+                    processAIResponse(response);
+                    
+                } catch (error) {
+                    console.error('Error generating keywords:', error);
+                    keywordList.innerHTML = `
+                        <div class="placeholder" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; color: var(--accent);"></i>
+                            <p>Error generating keywords: ${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            });
+            
+            // Get suggestions (simpler version without API call)
+            suggestBtn.addEventListener('click', function() {
+                const seedKeyword = seedKeywordInput.value.trim();
+                if (!seedKeyword) {
+                    alert('Please enter a seed keyword or topic first');
+                    return;
+                }
+                
+                // Show some example suggestions
+                const suggestions = generateSuggestions(seedKeyword);
+                displaySuggestions(suggestions);
+            });
+            
+            // Export functionality
+            exportBtn.addEventListener('click', function() {
+                const keywords = document.querySelectorAll('.keyword-item');
+                if (keywords.length === 0) {
+                    alert('No keywords to export');
+                    return;
+                }
+                
+                let csvContent = "Keyword,Monthly Volume,Difficulty,Intent,Opportunity\n";
+                
+                keywords.forEach(keyword => {
+                    const text = keyword.querySelector('.keyword-text').textContent;
+                    const volume = keyword.querySelector('.keyword-volume').textContent.replace('Volume: ', '');
+                    const difficulty = keyword.querySelector('.keyword-difficulty').textContent.replace('Difficulty: ', '');
+                    // For demo purposes, we'll use placeholder values for intent and opportunity
+                    csvContent += `"${text}",${volume},${difficulty},"informational","Good for blog content"\n`;
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `keywords_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
+            // Helper function to call Google AI API
+            async function callGoogleAI(apiKey, prompt, model, temperature) {
+                // In a real implementation, this would call the actual Google AI API
+                // For this demo, we'll simulate a response with mock data
+                
+                console.log('Simulating API call with:', { prompt, model, temperature });
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Return mock data
+                return JSON.stringify({
+                    keywords: generateMockKeywords(prompt)
+                });
+            }
+            
+            // Process AI response and display results
+            function processAIResponse(response) {
+                try {
+                    // Parse the response based on the selected format
+                    const settings = JSON.parse(localStorage.getItem('keywordGeniusSettings') || '{}');
+                    let keywords = [];
+                    
+                    if (settings.resultFormat === 'json') {
+                        const data = JSON.parse(response);
+                        keywords = data.keywords || [];
+                    } else {
+                        // For text or CSV, we'd need to parse accordingly
+                        // This is simplified for the demo
+                        keywords = generateMockKeywords();
+                    }
+                    
+                    // Display keywords
+                    displayKeywords(keywords);
+                    
+                    // Update stats
+                    updateKeywordStats(keywords);
+                    
+                } catch (error) {
+                    console.error('Error processing API response:', error);
+                    throw new Error('Failed to process API response. The AI might have returned malformed data.');
+                }
+            }
+            
+            // Display keywords in the UI
+            function displayKeywords(keywords) {
+                keywordList.innerHTML = '';
+                easyKeywordList.innerHTML = '';
+                mediumKeywordList.innerHTML = '';
+                hardKeywordList.innerHTML = '';
+                
+                let easyCount = 0, mediumCount = 0, hardCount = 0;
+                
+                keywords.forEach(keyword => {
+                    const difficulty = keyword.difficulty || Math.floor(Math.random() * 100) + 1;
+                    let difficultyLevel = 'medium';
+                    
+                    if (difficulty < 40) {
+                        difficultyLevel = 'easy';
+                        easyCount++;
+                    } else if (difficulty > 70) {
+                        difficultyLevel = 'hard';
+                        hardCount++;
+                    } else {
+                        mediumCount++;
+                    }
+                    
+                    const keywordEl = document.createElement('div');
+                    keywordEl.className = 'keyword-item';
+                    keywordEl.innerHTML = `
+                        <div class="keyword-text">${keyword.keyword || keyword.phrase || 'Unknown keyword'}</div>
+                        <div class="keyword-meta">
+                            <span class="keyword-volume">
+                                <i class="fas fa-chart-line"></i>
+                                Volume: ${keyword.volume || Math.floor(Math.random() * 5000) + 100}
+                            </span>
+                            <span class="keyword-difficulty">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Difficulty: ${difficulty}
+                            </span>
+                        </div>
+                    `;
+                    
+                    keywordList.appendChild(keywordEl.cloneNode(true));
+                    
+                    if (difficultyLevel === 'easy') {
+                        easyKeywordList.appendChild(keywordEl.cloneNode(true));
+                    } else if (difficultyLevel === 'medium') {
+                        mediumKeywordList.appendChild(keywordEl.cloneNode(true));
+                    } else {
+                        hardKeywordList.appendChild(keywordEl.cloneNode(true));
+                    }
+                });
+                
+                // Update tab badges
+                document.querySelector('.tab[data-tab="all"]').textContent = `All Keywords (${keywords.length})`;
+                document.querySelector('.tab[data-tab="easy"]').textContent = `Easy (${easyCount})`;
+                document.querySelector('.tab[data-tab="medium"]').textContent = `Medium (${mediumCount})`;
+                document.querySelector('.tab[data-tab="hard"]').textContent = `Hard (${hardCount})`;
+            }
+            
+            // Update keyword statistics
+            function updateKeywordStats(keywords) {
+                if (!keywords.length) return;
+                
+                const total = keywords.length;
+                const totalVolume = keywords.reduce((sum, kw) => sum + (kw.volume || 0), 0);
+                const totalDifficulty = keywords.reduce((sum, kw) => sum + (kw.difficulty || 0), 0);
+                
+                totalKeywordsEl.textContent = total;
+                avgVolumeEl.textContent = Math.round(totalVolume / total);
+                avgDifficultyEl.textContent = Math.round(totalDifficulty / total);
+            }
+            
+            // Generate mock suggestions
+            function generateSuggestions(seedKeyword) {
+                const prefixes = ['best', 'how to', 'why', 'what is', 'top', 'buy', 'review'];
+                const suffixes = ['near me', 'for beginners', '2023', 'tips', 'guide', 'comparison'];
+                
+                return [
+                    `${seedKeyword} ${suffixes[Math.floor(Math.random() * suffixes.length)]}`,
+                    `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${seedKeyword}`,
+                    `${seedKeyword} vs ${['alternative', 'competitor', 'similar product'][Math.floor(Math.random() * 3)]}`,
+                    `is ${seedKeyword} ${['good', 'worth it', 'safe', 'effective'][Math.floor(Math.random() * 4)]}`,
+                    `${seedKeyword} ${['cost', 'price', 'benefits', 'pros and cons'][Math.floor(Math.random() * 4)]}`
+                ];
+            }
+            
+            // Display suggestions
+            function displaySuggestions(suggestions) {
+                keywordList.innerHTML = '';
+                
+                const suggestionsList = document.createElement('ul');
+                suggestionsList.className = 'suggestions-list';
+                
+                suggestions.forEach(suggestion => {
+                    const item = document.createElement('li');
+                    item.className = 'suggestion-item';
+                    item.textContent = suggestion;
+                    item.addEventListener('click', function() {
+                        seedKeywordInput.value = suggestion;
+                        suggestionsList.remove();
+                    });
+                    suggestionsList.appendChild(item);
+                });
+                
+                keywordList.appendChild(suggestionsList);
+            }
+            
+            // Generate mock keywords for demo purposes
+            function generateMockKeywords() {
+                const seed = seedKeywordInput.value.trim() || 'digital marketing';
+                const keywords = [];
+                
+                const modifiers = [
+                    'best', 'how to', 'why', 'what is', 'top', 'buy', ' ',
+                    'free', 'paid', 'advanced', 'simple', 'easy', '',
+                    'guide', 'tutorial', 'course', 'training', 'certification'
+                ];
+                
+                const suffixes = [
+                    'for beginners', '2023', 'tips', 'strategies', 'tools',
+                    'software', 'services', 'companies', 'agency', 'near me',
+                    'online', 'at home', 'examples', 'ideas', 'benefits'
+                ];
+                
+                for (let i = 0; i < (keywordCountInput.value || 20); i++) {
+                    const mod = modifiers[Math.floor(Math.random() * modifiers.length)];
+                    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+                    
+                    keywords.push({
+                        keyword: `${mod ? mod + ' ' : ''}${seed} ${suffix}`.trim(),
+                        volume: Math.floor(Math.random() * 5000) + 100,
+                        difficulty: Math.floor(Math.random() * 100) + 1,
+                        intent: ['informational', 'commercial', 'navigational', 'transactional'][Math.floor(Math.random() * 4)],
+                        opportunity: ['High traffic potential', 'Low competition', 'Commercial intent', 'Growing trend'][Math.floor(Math.random() * 4)]
+                    });
+                }
+                
+                return keywords;
+            }
+            
+            // Initialize the app
+            function init() {
+                loadSettings();
+                
+                // Demo: Auto-fill with a sample keyword
+                if (!seedKeywordInput.value) {
+                    seedKeywordInput.value = 'vegan recipes';
+                }
+            }
+            
+            init();
+        });
+    </script>
+</body>
+</html>
